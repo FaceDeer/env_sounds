@@ -17,7 +17,8 @@ Where name is a unique identifier for this sound and env_sound_def is a table wi
 							-- If false, gain will be set to a random value between gain_minimum and gain_maximum.
 		average_pos = true,	-- If true, the sound will come from the average position of all the nodes found
 							-- If false, one node will be randomly selected as the sound source.
-		sounds = {"env_sounds_water"}, -- required, list of sounds to be randomly selected from each time this triggers
+		sounds_day = {"env_sounds_water"}, -- list of sounds to be randomly selected from each time this triggers, during the day
+		sounds_night = {"env_sounds_water"}, -- list of sounds to be randomly selected from each time this triggers, during the night
 		delay_min = 3.5,	-- required, the minimum number of seconds to delay before testing for this sound again
 		delay_max = 3.5,	-- required, the maximum number of seconds to delay before testing for this sound again
 	}

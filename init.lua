@@ -15,10 +15,23 @@ local function update_sound(def_name)
 	end
 
 	-- Look up and cache various values that only need to be calculated once
+
+	local sounds
+	local timeofday = minetest.get_timeofday()
+	if timeofday > 0.2 and timeofday < 0.8 then
+		sounds = def.sounds_day
+	else
+		sounds = def.sounds_night
+	end
+	if not sounds then
+		-- no sounds defined for this timeframe, so just pass
+		minetest.after(math.random(def.delay_min, def.delay_max), update_sound, def_name)
+		return
+	end
+
 	local radius = def.radius or 8
 	local gain_minimum = def.gain_minimum or 0.4
 	local gain_maximum = def.gain_maximum or 1
-	local sounds = def.sounds
 	local nodes = def.nodes
 	local sound = sounds[math.random(#sounds)]
 	local gain_multiplier
@@ -87,7 +100,8 @@ if minetest.get_modpath("default") then
 		gain_maximum = 1,
 		adjust_gain = true,
 		average_pos = true,
-		sounds = {"env_sounds_water"},
+		sounds_day = {"env_sounds_water"},
+		sounds_night = {"env_sounds_water"},
 		delay_min = 3.5,
 		delay_max = 3.5,
 	}
