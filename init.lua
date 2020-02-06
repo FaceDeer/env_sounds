@@ -23,6 +23,7 @@ local function update_sound(def_name)
 	local sound = sounds[math.random(#sounds)]
 	local gain_multiplier
 	local adjust_gain = def.adjust_gain ~= false
+	local average_pos = def.average_pos ~= false
 	if adjust_gain then
 		gain_multiplier = 1/(4*radius*radius)
 	end
@@ -35,15 +36,20 @@ local function update_sound(def_name)
 		local node_positions, _ = minetest.find_nodes_in_area(area_min, area_max, nodes)
 		local node_count = #node_positions
 		if node_count > 0 then
-
-			-- Find average position of node positions
-			local node_pos_average = vector.new()
-			for _, pos in ipairs(node_positions) do
-				node_pos_average.x = node_pos_average.x + pos.x
-				node_pos_average.y = node_pos_average.y + pos.y
-				node_pos_average.z = node_pos_average.z + pos.z
+		
+			local sound_pos
+			if average_pos then
+				-- Find average position of node positions
+				sound_pos = vector.new()
+				for _, pos in ipairs(node_positions) do
+					sound_pos.x = sound_pos.x + pos.x
+					sound_pos.y = sound_pos.y + pos.y
+					sound_pos.z = sound_pos.z + pos.z
+				end
+				sound_pos = vector.divide(sound_pos, node_count)
+			else
+				sound_pos = node_positions[math.random(node_count)]
 			end
-			node_pos_average = vector.divide(node_pos_average, node_count)
 			
 			local gain
 			if adjust_gain then
@@ -55,7 +61,7 @@ local function update_sound(def_name)
 			minetest.sound_play(
 				sound,
 				{
-					pos = node_pos_average,
+					pos = sound_pos,
 					to_player = player_name,
 					gain = gain,
 				}
@@ -80,6 +86,7 @@ if minetest.get_modpath("default") then
 		gain_minimum = 0.4,
 		gain_maximum = 1,
 		adjust_gain = true,
+		average_pos = true,
 		sounds = {"env_sounds_water"},
 		delay_min = 3.5,
 		delay_max = 3.5,
